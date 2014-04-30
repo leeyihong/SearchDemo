@@ -3,13 +3,14 @@ package com.leeyihong.search;
 public class Itinerary {
 
 	//Variables
+	byte[] image;
     int _id, rating;
-	String poi, category, sub_category, area, location, image;
+	String poi, category, sub_category, area, location;
 
 	//Constructors
     public Itinerary(){}
     
-    public Itinerary(int id, String poi, int rating, String category, String sub_category, String area, String location, String image){
+    public Itinerary(int id, String poi, int rating, String category, String sub_category, String area, String location, byte[] image){
     	this._id = id;
     	this.poi = poi;
     	this.rating = rating;
@@ -20,7 +21,7 @@ public class Itinerary {
     	this.image = image;
     }
     
-    public Itinerary(String poi, int rating, String category, String sub_category, String area, String location, String image){
+    public Itinerary(String poi, int rating, String category, String sub_category, String area, String location, byte[] image){
         this.poi = poi;
         this.rating = rating;
         this.category = category;
@@ -86,11 +87,11 @@ public class Itinerary {
 		this.location = location;
 	}
 
-	public String getImage() {
+	public byte[] getImage() {
 		return this.image;
 	}
 
-	public void setImage(String image) {
+	public void setImage(byte[] image) {
 		this.image = image;
 	}
 

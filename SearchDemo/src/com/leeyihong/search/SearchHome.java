@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -125,9 +126,11 @@ public class SearchHome extends Activity {
 			TextView categories_text = (TextView) v.findViewById(R.id.categories_text);
 			TextView poi_text = (TextView) v.findViewById(R.id.poi_text);
 			TextView location_text = (TextView) v.findViewById(R.id.location_text);
+			ImageView itinerary_img = (ImageView) v.findViewById(R.id.itinerary_img);
 			ImageView rating_img = (ImageView) v.findViewById(R.id.rating_img);
 			
 			if (itinerary_list.size() > 0) {
+				itinerary_img.setImageBitmap(BitmapFactory.decodeByteArray(itinerary_list.get(position).image, 0, itinerary_list.get(position).image.length));
 				poi_text.setText(itinerary_list.get(position).getPoi());
 				if(itinerary_list.get(position).getSubCategory().equalsIgnoreCase("null")){
 					categories_text.setText(itinerary_list.get(position).getCategory());
@@ -135,6 +138,7 @@ public class SearchHome extends Activity {
 					categories_text.setText(itinerary_list.get(position).getCategory() + "   " +itinerary_list.get(position).getSubCategory() );
 				}
 				location_text.setText(itinerary_list.get(position).getLocation());
+				
 				switch (itinerary_list.get(position).getRating()){
 				case 1:
 					rating_img.setBackgroundDrawable(getResources().getDrawable(R.drawable.one_star));

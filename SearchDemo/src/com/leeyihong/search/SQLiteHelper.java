@@ -23,11 +23,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private SQLiteDatabase myDatabase; 
  
     private final Context myContext;
-    
-    private String[] allColumns = { COLUMN_ID, COLUMN_POI, COLUMN_CATEGORY, COLUMN_SUBCATEGORY, COLUMN_RATING };
-	 
 	
-	private static final String DATABASE_NAME = "commments.db";
 	private static final int DATABASE_VERSION = 1;
 	
 	public static final String TABLE_ITINEARY = "itinerary";
@@ -38,7 +34,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_AREA = "area";
 	public static final String COLUMN_LOCATION = "location";
 	public static final String COLUMN_RATING = "rating";	// 0 - 5
-	public static final String COLUMN_IMAGE = "image";		//Do note that images had been download to phone. Might be ARRAY
+	public static final String COLUMN_IMAGE = "images";		//Do note that images had been download to phone. Might be ARRAY
 	
 	public static final String COLUMN_GENERAL_LOCATION = "general location";	// estimate area
 	public static final String COLUMN_LAST_MOTIFIED = "lastModified";
@@ -172,10 +168,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	        	itinerary.setSubCategory(cursor.getString(cursor.getColumnIndex(COLUMN_SUBCATEGORY)));
 	        	itinerary.setArea(cursor.getString(cursor.getColumnIndex(COLUMN_AREA)));
 	        	itinerary.setLocation(cursor.getString(cursor.getColumnIndex(COLUMN_LOCATION)));
-	        	//itinerary.setImage(cursor.getString(cursor.getColumnIndex(COLUMN_IMAGE)));
+	        	itinerary.setImage(cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE)));
 	        	
 	            itineraryList.add(itinerary);
-	            Log.i("Info","TEST:  " + itinerary.getPoi());
 	    	}while(cursor.moveToNext());
 	    }
 	    cursor.close();
