@@ -1,0 +1,50 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".SearchHome" >
+
+    <LinearLayout 
+        android:id="@+id/search_filter_linear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:weightSum="9"
+        android:orientation="horizontal"
+        >        
+        
+        <Spinner android:id="@+id/category_spinner"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="3"
+	        android:drawSelectorOnTop="true"
+	        android:prompt="@string/category_prompt"
+	    	/>
+        
+        <Spinner android:id="@+id/location_spinner"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="3"
+	        android:drawSelectorOnTop="true"
+	        android:prompt="@string/location_prompt"
+	    	/>
+        
+        <Spinner android:id="@+id/sorting_preferences_spinner"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="3"
+	        android:drawSelectorOnTop="true"
+	        android:prompt="@string/sort_prompt"
+	    	/>
+        
+    </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/hello_world" />
+
+</RelativeLayout>

@@ -1,0 +1,4 @@
+BEGIN TRANSACTION;
+CREATE TABLE itinerary (_id INTEGER PRIMARY KEY, poi TEXT, rating NUMERIC, category TEXT, img TEXT, sub_catergory TEXT);
+INSERT INTO itinerary VALUES(1,'Rider Cafe',5,'Food and Beverage',NULL,'cafe');
+COMMIT;
