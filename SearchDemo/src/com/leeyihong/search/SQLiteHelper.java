@@ -24,8 +24,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
  
     private final Context myContext;
 	
-	private static final int DATABASE_VERSION = 1;
-	
 	public static final String TABLE_ITINEARY = "itinerary";
 	public static final String COLUMN_ID = "_id";
 	public static final String COLUMN_POI = "poi";
@@ -37,7 +35,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	public static final String COLUMN_IMAGE = "images";		//Do note that images had been download to phone. Might be ARRAY
 	
 	public static final String COLUMN_GENERAL_LOCATION = "general location";	// estimate area
-	public static final String COLUMN_LAST_MOTIFIED = "lastModified";
+	public static final String COLUMN_LAST_UPDATED = "lastupdated";
 	public static final String COLUMN_CREATED_DATE = "dateCreated";
 
 	//DB DATA includes
@@ -206,11 +204,13 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 			case 2: //BY Alphabet
 				sortClause = sortClause + COLUMN_POI + " ASC";
 				break;
+			case 3: //BY Last Updated
+				sortClause = sortClause + COLUMN_LAST_UPDATED + " DESC";
+				break;
 			}
 		}
 
 	    List<Itinerary> itineraryList = new ArrayList<Itinerary>();
-		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = myDatabase.rawQuery(filterTableQuery + whereClause + sortClause, null);
 		
 	    if (cursor.moveToFirst()) {
