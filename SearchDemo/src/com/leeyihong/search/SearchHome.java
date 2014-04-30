@@ -18,10 +18,13 @@ import android.widget.Spinner;
 public class SearchHome extends Activity {
 
 	ProgressDialog pd;
-	Spinner category_spinner;
+	Spinner category_spinner, location_spinner, sorting_preferences_spinner;
 	SQLiteHelper myDbHelper;
 	
-	public static final String[] DAYS_OPTIONS  = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+	public static final String[] CATEGORY_OPTIONS  = {"ALL CATEGORY", "Food and Beverage", "Island", "Nature", "Museum", "Religion", "To-Do"};
+	public static final String[] LOCATION_OPTIONS  = {"EVERYWHERE", "Central", "North", "South", "East", "West"};
+	public static final String[] SORT_OPTIONS  = {"AI SORTING","Highest Rating", "Lowest Rating", "Latest Updated", "Alphabet"};	// Other possible sort Distance 
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +32,8 @@ public class SearchHome extends Activity {
 		setContentView(R.layout.search_home);
 		
 		category_spinner = (Spinner) findViewById(R.id.category_spinner);
+		location_spinner = (Spinner) findViewById(R.id.location_spinner);
+		sorting_preferences_spinner = (Spinner) findViewById(R.id.sorting_preferences_spinner);
 		
 		myDbHelper = new SQLiteHelper(this);
  
@@ -48,17 +53,26 @@ public class SearchHome extends Activity {
             for(int i = 0; i < iti.size(); i++) {
             	Log.i("info", "data" +iti.get(i).toString());
             }
+            
             pd.dismiss();
 	 	}catch(SQLException sqle){
 	 		throw sqle;
 	 	}
         
-		ArrayAdapter<String> adapter = new ArrayAdapter<String> (SearchHome.this, android.R.layout.simple_spinner_item, DAYS_OPTIONS);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        category_spinner.setAdapter(adapter);
-        
-
-        
+	 	//ArrayAdapter<String> categoryAdapter = new ArrayAdapter<String> (SearchHome.this, android.R.layout.simple_spinner_item, CATEGORY_OPTIONS);
+	 	ArrayAdapter<String> categoryAdapter = new ArrayAdapter<String> (SearchHome.this, R.layout.spinner_item, CATEGORY_OPTIONS);
+	 	categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+	 	category_spinner.setAdapter(categoryAdapter);
+	 	
+	 	//ArrayAdapter<String> locationAdapter = new ArrayAdapter<String> (SearchHome.this, android.R.layout.simple_spinner_item, LOCATION_OPTIONS);
+	 	ArrayAdapter<String> locationAdapter = new ArrayAdapter<String> (SearchHome.this, R.layout.spinner_item, LOCATION_OPTIONS);
+	 	locationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+	 	location_spinner.setAdapter(locationAdapter);
+	 	
+	 	//ArrayAdapter<String> sortingAdapter = new ArrayAdapter<String> (SearchHome.this, android.R.layout.simple_spinner_item, SORT_OPTIONS);
+		ArrayAdapter<String> sortingAdapter = new ArrayAdapter<String> (SearchHome.this, R.layout.spinner_item, SORT_OPTIONS);
+		sortingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sorting_preferences_spinner.setAdapter(sortingAdapter);
         
 	}
 
