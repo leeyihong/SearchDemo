@@ -33,8 +33,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	public static final String TABLE_ITINEARY = "itinerary";
 	public static final String COLUMN_ID = "_id";
 	public static final String COLUMN_POI = "poi";
-	public static final String COLUMN_CATEGORY = "category";//Might be ARRAY
-	public static final String COLUMN_SUBCATEGORY = "subcategory";//Might be ARRAY
+	public static final String COLUMN_CATEGORY = "category";
+	public static final String COLUMN_SUBCATEGORY = "subcategory";
+	public static final String COLUMN_AREA = "area";
+	public static final String COLUMN_LOCATION = "location";
 	public static final String COLUMN_RATING = "rating";	// 0 - 5
 	public static final String COLUMN_IMAGE = "image";		//Do note that images had been download to phone. Might be ARRAY
 	
@@ -151,48 +153,33 @@ public class SQLiteHelper extends SQLiteOpenHelper {
  
 	}
 	
-	public Cursor getAllRecord() throws SQLException{
-	   Cursor cursor = myDatabase.rawQuery("SELECT * FROM " + TABLE_ITINEARY, null);
-	   
-	   return cursor;
-	}
-	
 	public List<Itinerary> getAllItineraryList() {
 	    List<Itinerary> itineraryList = new ArrayList<Itinerary>();
-	    String selectQuery = "SELECT  * FROM " + TABLE_ITINEARY + " LIMIT 1";
+	    String selectQuery = "SELECT  * FROM " + TABLE_ITINEARY;
 	    //LIMIT <count> OFFSET <skip>
 	    //LIMIT <skip>, <count>
 	 
 	    SQLiteDatabase db = this.getReadableDatabase();
-	    Cursor cursor = myDatabase.query(SQLiteHelper.TABLE_ITINEARY, allColumns, null, null, null, null, null);
-	    //Cursor cursor = myDatabase.rawQuery(selectQuery, null);
+	    Cursor cursor = myDatabase.rawQuery(selectQuery, null);
 	 
 	    if (cursor.moveToFirst()) {
-//	    	try{
-	    	
-		    	do {
-		        	Itinerary itinerary = new Itinerary();
-		        	itinerary.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_ID))));
-		        	itinerary.setPoi(cursor.getString(cursor.getColumnIndex(COLUMN_POI)));
-		        	itinerary.setRating(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_RATING))));
-		        	itinerary.setCategory(cursor.getString(cursor.getColumnIndex(COLUMN_CATEGORY)));
-		        	itinerary.setSubCategory(cursor.getString(cursor.getColumnIndex(COLUMN_SUBCATEGORY)));
-		        	//itinerary.setImage(cursor.getString(cursor.getColumnIndex(COLUMN_IMAGE)));
-		        	
-		            itineraryList.add(itinerary);
-		            Log.i("Info","TEST:  " + itinerary.getPoi());
-		    	}while(cursor.moveToNext());
-//		    	cursor.close();
-		    	
-//	    	} catch(Exception e) {
-//	    		Log.e("","ERROR : " + e.toString());
-//	    	
-//	    	} finally {
-//	    		cursor.close();
-//	    	}
-	    	
+	    	do {
+	        	Itinerary itinerary = new Itinerary();
+	        	itinerary.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_ID))));
+	        	itinerary.setPoi(cursor.getString(cursor.getColumnIndex(COLUMN_POI)));
+	        	itinerary.setRating(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_RATING))));
+	        	itinerary.setCategory(cursor.getString(cursor.getColumnIndex(COLUMN_CATEGORY)));
+	        	itinerary.setSubCategory(cursor.getString(cursor.getColumnIndex(COLUMN_SUBCATEGORY)));
+	        	itinerary.setArea(cursor.getString(cursor.getColumnIndex(COLUMN_AREA)));
+	        	itinerary.setLocation(cursor.getString(cursor.getColumnIndex(COLUMN_LOCATION)));
+	        	//itinerary.setImage(cursor.getString(cursor.getColumnIndex(COLUMN_IMAGE)));
+	        	
+	            itineraryList.add(itinerary);
+	            Log.i("Info","TEST:  " + itinerary.getPoi());
+	    	}while(cursor.moveToNext());
 	    }
 	    cursor.close();
+	    
 	    return itineraryList;
 	}
 	

@@ -4,25 +4,29 @@ public class Itinerary {
 
 	//Variables
     int _id, rating;
-	String poi, category, sub_category, image;
-    
-    //Constructors
+	String poi, category, sub_category, area, location, image;
+
+	//Constructors
     public Itinerary(){}
     
-    public Itinerary(int id, String poi, int rating, String category, String sub_category, String image){
+    public Itinerary(int id, String poi, int rating, String category, String sub_category, String area, String location, String image){
     	this._id = id;
     	this.poi = poi;
     	this.rating = rating;
     	this.category = category;
     	this.sub_category = sub_category;
+    	this.area = area;
+    	this.location = location;
     	this.image = image;
     }
     
-    public Itinerary(String poi, int rating, String category, String sub_category, String image){
+    public Itinerary(String poi, int rating, String category, String sub_category, String area, String location, String image){
         this.poi = poi;
         this.rating = rating;
         this.category = category;
         this.sub_category = sub_category;
+    	this.area = area;
+    	this.location = location;
         this.image = image;
     }
 
@@ -64,6 +68,22 @@ public class Itinerary {
 
 	public void setSubCategory(String sub_category) {
 		this.sub_category = sub_category;
+	}
+    
+    public String getArea() {
+		return this.area;
+	}
+
+	public void setArea(String area) {
+		this.area = area;
+	}
+
+	public String getLocation() {
+		return this.location;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
 	}
 
 	public String getImage() {
