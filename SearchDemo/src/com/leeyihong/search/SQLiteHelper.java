@@ -163,6 +163,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	    	}while(cursor.moveToNext());
 	    }
 	    cursor.close();
+	    db.close();
 	    
 	    return itineraryList;
 	}

@@ -17,6 +17,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.LruCache;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,6 +47,7 @@ public class SearchHome extends Activity {
 	public static final String[] LOCATION_OPTIONS  = {"EVERYWHERE", "Central", "North", "South", "East", "West"};
 	public static final String[] SORT_OPTIONS  = {"AI SORTING","Highest Rating", "Alphabet", "Latest Updated"};	// Other possible sort Distance 
 	
+	private LruCache<String, Bitmap> mMemoryCache;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,16 @@ public class SearchHome extends Activity {
         sorting_preferences_spinner.setAdapter(sortingAdapter);
         
         getImageWidthDimension();
+        
+        //Cache
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+        final int cacheSize = maxMemory / 6;
+        mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
+            @Override
+            protected int sizeOf(String key, Bitmap bitmap) {
+                return bitmap.getByteCount() / 1024;
+            }
+        };
         
         //DATABASE QUERY
 		myDbHelper = new SQLiteHelper(this);
@@ -150,6 +162,7 @@ public class SearchHome extends Activity {
             itineraryListAdapter.notifyDataSetChanged();
             
             pd.dismiss();
+            myDbHelper.close();
 	 	}catch(SQLException sqle){
 	 		throw sqle;
 	 	}
@@ -192,7 +205,17 @@ public class SearchHome extends Activity {
 			return position;
 		}
 		
-		public Bitmap resizeBitmap(Bitmap originalBitmap){
+		public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+		    if (getBitmapFromMemCache(key) == null) {
+		        mMemoryCache.put(key, bitmap);
+		    }
+		}
+
+		public Bitmap getBitmapFromMemCache(String key) {
+		    return mMemoryCache.get(key);
+		}
+		
+		public Bitmap resizeBitmap(String bmId, Bitmap originalBitmap){
 			int width = originalBitmap.getWidth();
 		    int height = originalBitmap.getHeight();
 		    float scaleWidth = screenWidth / width;
@@ -204,23 +227,35 @@ public class SearchHome extends Activity {
 		    Bitmap scaledBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, width, height, matrix, false);
 		    
 		    if(newHeight < imageHeightPixel) {
+		    	addBitmapToMemoryCache(bmId, scaledBitmap);
 		    	return scaledBitmap;
 		    } else {
-		    	return Bitmap.createBitmap(scaledBitmap, 0, 0, (int) screenWidth, imageHeightPixel);
+		    	Bitmap croppedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, (int) screenWidth, imageHeightPixel);
+		    	addBitmapToMemoryCache(bmId, croppedBitmap);
+		    	return croppedBitmap;
 		    }
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View v = getLayoutInflater().inflate(R.layout.itinerary_sublist, null);
-			TextView categories_text = (TextView) v.findViewById(R.id.categories_text);
-			TextView poi_text = (TextView) v.findViewById(R.id.poi_text);
-			TextView location_text = (TextView) v.findViewById(R.id.location_text);
-			ImageView itinerary_img = (ImageView) v.findViewById(R.id.itinerary_img);
-			ImageView rating_img = (ImageView) v.findViewById(R.id.rating_img);
+			
+			if (convertView == null) {
+		        convertView = getLayoutInflater().inflate(R.layout.itinerary_sublist, null);
+		    }
+			
+			TextView categories_text = (TextView) convertView.findViewById(R.id.categories_text);
+			TextView poi_text = (TextView) convertView.findViewById(R.id.poi_text);
+			TextView location_text = (TextView) convertView.findViewById(R.id.location_text);
+			ImageView itinerary_img = (ImageView) convertView.findViewById(R.id.itinerary_img);
+			ImageView rating_img = (ImageView) convertView.findViewById(R.id.rating_img);
 			
 			if (itinerary_list.size() > 0) {
-				itinerary_img.setImageBitmap(resizeBitmap(BitmapFactory.decodeByteArray(itinerary_list.get(position).image, 0, itinerary_list.get(position).image.length)));
+				Bitmap currBitmap = getBitmapFromMemCache(""+itinerary_list.get(position).getId());
+				if(currBitmap != null) {
+					itinerary_img.setImageBitmap(currBitmap);
+				} else {
+					itinerary_img.setImageBitmap(resizeBitmap(""+itinerary_list.get(position).getId(), BitmapFactory.decodeByteArray(itinerary_list.get(position).image, 0, itinerary_list.get(position).image.length)));
+				}
 				
 				poi_text.setText(itinerary_list.get(position).getPoi());
 				if(itinerary_list.get(position).getSubCategory().equalsIgnoreCase("null")){
@@ -250,8 +285,21 @@ public class SearchHome extends Activity {
 				}
 				
 			}
-			return v;
+			return convertView;
 		}
-		
+	}
+	
+	@Override
+	public void onStop(){
+		if(myDbHelper != null) 
+			myDbHelper.close();
+		super.onStop();
+	}
+	
+	@Override
+	public void onPause(){
+		if(myDbHelper != null) 
+			myDbHelper.close();
+		super.onPause();
 	}
 }

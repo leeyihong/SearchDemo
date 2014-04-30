@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.LruCache;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,8 @@ public class SearchResult extends Activity {
 	ListView itinerary_list;
 	ProgressDialog pd;
 	SQLiteHelper myDbHelper;
+
+	private LruCache<String, Bitmap> mMemoryCache;
 	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +45,15 @@ public class SearchResult extends Activity {
         
         itinerary_list = (ListView) findViewById(R.id.itinerary_list);
         getImageWidthDimension();
+        
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+        final int cacheSize = maxMemory / 6;
+        mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
+            @Override
+            protected int sizeOf(String key, Bitmap bitmap) {
+                return bitmap.getByteCount() / 1024;
+            }
+        };
         
         myDbHelper = new SQLiteHelper(this);
         try {
@@ -82,6 +94,7 @@ public class SearchResult extends Activity {
                 itineraryListAdapter.notifyDataSetChanged();
                 
                 pd.dismiss();
+                myDbHelper.close();
     	 	}catch(SQLException sqle){
     	 		throw sqle;
     	 	}
@@ -111,7 +124,17 @@ public class SearchResult extends Activity {
 			return position;
 		}
 		
-		public Bitmap resizeBitmap(Bitmap originalBitmap){
+		public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+		    if (getBitmapFromMemCache(key) == null) {
+		        mMemoryCache.put(key, bitmap);
+		    }
+		}
+
+		public Bitmap getBitmapFromMemCache(String key) {
+		    return mMemoryCache.get(key);
+		}
+		
+		public Bitmap resizeBitmap(String bmId, Bitmap originalBitmap){
 			int width = originalBitmap.getWidth();
 		    int height = originalBitmap.getHeight();
 		    float scaleWidth = screenWidth / width;
@@ -123,23 +146,35 @@ public class SearchResult extends Activity {
 		    Bitmap scaledBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, width, height, matrix, false);
 		    
 		    if(newHeight < imageHeightPixel) {
+		    	addBitmapToMemoryCache(bmId, scaledBitmap);
 		    	return scaledBitmap;
 		    } else {
-		    	return Bitmap.createBitmap(scaledBitmap, 0, 0, (int) screenWidth, imageHeightPixel);
+		    	Bitmap croppedBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, (int) screenWidth, imageHeightPixel);
+		    	addBitmapToMemoryCache(bmId, croppedBitmap);
+		    	return croppedBitmap;
 		    }
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			View v = getLayoutInflater().inflate(R.layout.itinerary_sublist, null);
-			TextView categories_text = (TextView) v.findViewById(R.id.categories_text);
-			TextView poi_text = (TextView) v.findViewById(R.id.poi_text);
-			TextView location_text = (TextView) v.findViewById(R.id.location_text);
-			ImageView itinerary_img = (ImageView) v.findViewById(R.id.itinerary_img);
-			ImageView rating_img = (ImageView) v.findViewById(R.id.rating_img);
+
+			if (convertView == null) {
+		        convertView = getLayoutInflater().inflate(R.layout.itinerary_sublist, null);
+		    }
+			
+			TextView categories_text = (TextView) convertView.findViewById(R.id.categories_text);
+			TextView poi_text = (TextView) convertView.findViewById(R.id.poi_text);
+			TextView location_text = (TextView) convertView.findViewById(R.id.location_text);
+			ImageView itinerary_img = (ImageView) convertView.findViewById(R.id.itinerary_img);
+			ImageView rating_img = (ImageView) convertView.findViewById(R.id.rating_img);
 			
 			if (itinerary_list.size() > 0) {
-				itinerary_img.setImageBitmap(resizeBitmap(BitmapFactory.decodeByteArray(itinerary_list.get(position).image, 0, itinerary_list.get(position).image.length)));
+				Bitmap currBitmap = getBitmapFromMemCache(""+itinerary_list.get(position).getId());
+				if(currBitmap != null) {
+					itinerary_img.setImageBitmap(currBitmap);
+				} else {
+					itinerary_img.setImageBitmap(resizeBitmap(""+itinerary_list.get(position).getId(), BitmapFactory.decodeByteArray(itinerary_list.get(position).image, 0, itinerary_list.get(position).image.length)));
+				}
 				
 				poi_text.setText(itinerary_list.get(position).getPoi());
 				if(itinerary_list.get(position).getSubCategory().equalsIgnoreCase("null")){
@@ -169,8 +204,22 @@ public class SearchResult extends Activity {
 				}
 				
 			}
-			return v;
+			return convertView;
 		}
 		
+	}
+	
+	@Override
+	public void onStop(){
+		if(myDbHelper != null) 
+			myDbHelper.close();
+		super.onStop();
+	}
+	
+	@Override
+	public void onPause(){
+		if(myDbHelper != null) 
+			myDbHelper.close();
+		super.onPause();
 	}
 }
