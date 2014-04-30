@@ -9,10 +9,13 @@ import com.leeyihong.search.R;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.database.Cursor;
 import android.database.SQLException;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +28,8 @@ import android.widget.TextView;
 
 public class SearchHome extends Activity {
 	
+	float screenWidth = 0;
+	int imageHeightPixel = 0;
 	ItineraryListAdapter itineraryListAdapter;
 	ListView itinerary_list;
 	ProgressDialog pd;
@@ -59,7 +64,8 @@ public class SearchHome extends Activity {
         sorting_preferences_spinner.setAdapter(sortingAdapter);
         
         //TODO List/Table View Itinerary
-        //TODO Set Adapter Change Listeners
+        
+        getImageWidthDimension();
         
         //DATABASE QUERY
 		myDbHelper = new SQLiteHelper(this);
@@ -77,10 +83,6 @@ public class SearchHome extends Activity {
 			pd = ProgressDialog.show(SearchHome.this, "","Loading...", true, true);
 
     		List<Itinerary> iti = myDbHelper.getAllItineraryList();
-//            for(int i = 0; i < iti.size(); i++) {
-//            	//Set Adapter Information
-//            	Log.i("info", "data" +iti.get(i).toString());
-//            }
             itineraryListAdapter = new ItineraryListAdapter(new ArrayList<Itinerary>(iti));
             itinerary_list.setAdapter(itineraryListAdapter);
             itineraryListAdapter.notifyDataSetChanged();
@@ -91,13 +93,22 @@ public class SearchHome extends Activity {
 	 	}
 	}
 
+	public void getImageWidthDimension(){
+		DisplayMetrics metrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		screenWidth = (int) metrics.widthPixels;
+		
+		DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+		imageHeightPixel = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150 , getResources().getDisplayMetrics());
+	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
+		//TODO add Search by Name
 		getMenuInflater().inflate(R.menu.search_home, menu);
 		return true;
 	}
 
-	//TODO
 	public class ItineraryListAdapter extends BaseAdapter {
 		ArrayList<Itinerary> itinerary_list;
 
@@ -119,6 +130,24 @@ public class SearchHome extends Activity {
 		public long getItemId(int position) {
 			return position;
 		}
+		
+		public Bitmap resizeBitmap(Bitmap originalBitmap){
+			int width = originalBitmap.getWidth();
+		    int height = originalBitmap.getHeight();
+		    float scaleWidth = screenWidth / width;
+		    int newHeight = (int) (height * scaleWidth);
+		    
+		    Matrix matrix = new Matrix();
+		    matrix.postScale(scaleWidth, scaleWidth);
+		    
+		    Bitmap scaledBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, width, height, matrix, false);
+		    
+		    if(newHeight < imageHeightPixel) {
+		    	return scaledBitmap;
+		    } else {
+		    	return Bitmap.createBitmap(scaledBitmap, 0, 0, (int) screenWidth, imageHeightPixel);
+		    }
+		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
@@ -130,7 +159,8 @@ public class SearchHome extends Activity {
 			ImageView rating_img = (ImageView) v.findViewById(R.id.rating_img);
 			
 			if (itinerary_list.size() > 0) {
-				itinerary_img.setImageBitmap(BitmapFactory.decodeByteArray(itinerary_list.get(position).image, 0, itinerary_list.get(position).image.length));
+				itinerary_img.setImageBitmap(resizeBitmap(BitmapFactory.decodeByteArray(itinerary_list.get(position).image, 0, itinerary_list.get(position).image.length)));
+				
 				poi_text.setText(itinerary_list.get(position).getPoi());
 				if(itinerary_list.get(position).getSubCategory().equalsIgnoreCase("null")){
 					categories_text.setText(itinerary_list.get(position).getCategory());
