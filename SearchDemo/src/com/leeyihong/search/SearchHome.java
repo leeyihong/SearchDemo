@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -124,15 +125,34 @@ public class SearchHome extends Activity {
 			TextView categories_text = (TextView) v.findViewById(R.id.categories_text);
 			TextView poi_text = (TextView) v.findViewById(R.id.poi_text);
 			TextView location_text = (TextView) v.findViewById(R.id.location_text);
+			ImageView rating_img = (ImageView) v.findViewById(R.id.rating_img);
 			
 			if (itinerary_list.size() > 0) {
 				poi_text.setText(itinerary_list.get(position).getPoi());
 				if(itinerary_list.get(position).getSubCategory().equalsIgnoreCase("null")){
 					categories_text.setText(itinerary_list.get(position).getCategory());
 				} else {
-					categories_text.setText(itinerary_list.get(position).getCategory() + " " +itinerary_list.get(position).getSubCategory() );
+					categories_text.setText(itinerary_list.get(position).getCategory() + "   " +itinerary_list.get(position).getSubCategory() );
 				}
 				location_text.setText(itinerary_list.get(position).getLocation());
+				switch (itinerary_list.get(position).getRating()){
+				case 1:
+					rating_img.setBackgroundDrawable(getResources().getDrawable(R.drawable.one_star));
+					break;
+				case 2:
+					rating_img.setBackgroundDrawable(getResources().getDrawable(R.drawable.two_star));
+					break;
+				case 3:
+					rating_img.setBackgroundDrawable(getResources().getDrawable(R.drawable.three_star));
+					break;
+				case 4:
+					rating_img.setBackgroundDrawable(getResources().getDrawable(R.drawable.four_star));
+					break;
+				case 5:
+				default:
+					rating_img.setBackgroundDrawable(getResources().getDrawable(R.drawable.five_star));
+					break;
+				}
 				
 			}
 			return v;
