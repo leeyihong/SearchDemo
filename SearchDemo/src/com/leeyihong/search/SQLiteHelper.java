@@ -179,6 +179,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 		String filterTableQuery = "SELECT  * FROM " + TABLE_ITINEARY ;
 		
 		String whereClause = "";
+		String sortClause = "";
 		
 		if(category != 0 || area != 0) {
 			whereClause = " WHERE "; 
@@ -195,10 +196,22 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 		if(area != 0) {
 			whereClause = whereClause + COLUMN_AREA  + " LIKE '" + SearchHome.LOCATION_OPTIONS[area] + "'";
 		}
+		
+		if(sorting != 0) {
+			sortClause = " ORDER BY ";
+			switch (sorting) {
+			case 1: //BY Highest Rating 
+				sortClause = sortClause + COLUMN_RATING + " DESC";
+				break;
+			case 2: //BY Alphabet
+				sortClause = sortClause + COLUMN_POI + " ASC";
+				break;
+			}
+		}
 
 	    List<Itinerary> itineraryList = new ArrayList<Itinerary>();
 		SQLiteDatabase db = this.getReadableDatabase();
-		Cursor cursor = myDatabase.rawQuery(filterTableQuery + whereClause, null);
+		Cursor cursor = myDatabase.rawQuery(filterTableQuery + whereClause + sortClause, null);
 		
 	    if (cursor.moveToFirst()) {
 	    	do {

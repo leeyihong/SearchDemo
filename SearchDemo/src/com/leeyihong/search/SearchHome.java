@@ -41,7 +41,7 @@ public class SearchHome extends Activity {
 	//public static final String[] CATEGORY_OPTIONS  = getResources().getStringArray(R.array.category_option);
 	public static final String[] CATEGORY_OPTIONS  = {"ALL CATEGORY", "Food and Beverage", "Island", "Nature", "Museum", "Religion", "To-Do"};
 	public static final String[] LOCATION_OPTIONS  = {"EVERYWHERE", "Central", "North", "South", "East", "West"};
-	public static final String[] SORT_OPTIONS  = {"AI SORTING","Highest Rating", "Lowest Rating", "Latest Updated", "Alphabet"};	// Other possible sort Distance 
+	public static final String[] SORT_OPTIONS  = {"AI SORTING","Highest Rating", "Alphabet", "Latest Updated"};	// Other possible sort Distance 
 	
 	
 	@Override
@@ -105,9 +105,20 @@ public class SearchHome extends Activity {
 	 	});
 	 	
 	 	location_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+	 		@Override
+	 		public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+	 			lastSelectedLocation = position;
+	 			filterItinerary();
+	 		}
+	 		
+	 		@Override
+	 		public void onNothingSelected(AdapterView<?> arg0) {}
+	 	});
+	 	
+	 	sorting_preferences_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-				lastSelectedLocation = position;
+				lastSelectedSorting = position;
 				filterItinerary();
 			}
 
