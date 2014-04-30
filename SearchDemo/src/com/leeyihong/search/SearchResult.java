@@ -15,7 +15,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +44,6 @@ public class SearchResult extends Activity {
         getImageWidthDimension();
         
         myDbHelper = new SQLiteHelper(this);
-        
         try {
         	myDbHelper.createDataBase();
 	 	} catch (IOException ioe) {
@@ -88,7 +86,6 @@ public class SearchResult extends Activity {
     	 		throw sqle;
     	 	}
         }
- 
     }
 
     //TODO To Create a Combine Class with Search Home
@@ -123,7 +120,6 @@ public class SearchResult extends Activity {
 		    Matrix matrix = new Matrix();
 		    matrix.postScale(scaleWidth, scaleWidth);
 		    
-		    Log.i("", "**** Height " + height + " Width " + width );
 		    Bitmap scaledBitmap = Bitmap.createBitmap(originalBitmap, 0, 0, width, height, matrix, false);
 		    
 		    if(newHeight < imageHeightPixel) {

@@ -42,7 +42,6 @@ public class SearchHome extends Activity {
 	Spinner category_spinner, location_spinner, sorting_preferences_spinner;
 	SQLiteHelper myDbHelper;
 	
-	//public static final String[] CATEGORY_OPTIONS  = getResources().getStringArray(R.array.category_option);
 	public static final String[] CATEGORY_OPTIONS  = {"ALL CATEGORY", "Food and Beverage", "Island", "Nature", "Museum", "Religion", "To-Do"};
 	public static final String[] LOCATION_OPTIONS  = {"EVERYWHERE", "Central", "North", "South", "East", "West"};
 	public static final String[] SORT_OPTIONS  = {"AI SORTING","Highest Rating", "Alphabet", "Latest Updated"};	// Other possible sort Distance 
@@ -158,7 +157,6 @@ public class SearchHome extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		//TODO add Search Icon to search by Name
 		getMenuInflater().inflate(R.menu.search_home, menu);
 		
 		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -169,10 +167,6 @@ public class SearchHome extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		int id = item.getItemId();
-//        if (id == R.id.action_search) {
-//        	Log.i("","Click on Search");
-//        }
 		return super.onOptionsItemSelected(item);
 	}
 

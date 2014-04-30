@@ -60,7 +60,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	public void createDataBase() throws IOException{
 		 
     	boolean dbExist = checkDataBase();
-    	Log.i("", "create data base ********");
     	if(dbExist){
     		Log.i("SQLiteHelper", "Database exist");
     	}else{
@@ -79,7 +78,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 	
 	private boolean checkDataBase(){
-    	Log.i("", "check data base ********");
 		 
     	SQLiteDatabase checkDB = null;
     	try{
@@ -97,7 +95,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 	
 	private void copyDataBase() throws IOException{
-    	Log.i("", "copy data base ********");
 		 
     	//Open your local db as the input stream
     	InputStream myInput = myContext.getAssets().open(DB_NAME);
@@ -123,14 +120,12 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     }
 
     public void openDataBase() throws SQLException{
-    	Log.i("", "open data base ********");
         String myPath = DB_PATH + DB_NAME;
     	myDatabase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
     }
     
     @Override
 	public synchronized void close() {
-    	Log.i("", "close data base ********");
     	if(myDatabase != null)
     		myDatabase.close();
     	

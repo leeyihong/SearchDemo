@@ -9,15 +9,5 @@
     <string name="location_prompt">Location</string>
     <string name="search_hint">Enter Itinerary Name</string>
     <string name="sort_prompt">Location</string>
-
-    <string-array name="category_option">
-        <item>ALL CATEGORY</item>
-        <item>Food and Beverage</item>
-        <item>Island</item>
-        <item>Nature</item>
-        <item>Museum</item>
-        <item>Religion</item>
-        <item>To-Do</item>
-    </string-array>
     
 </resources>
