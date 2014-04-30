@@ -184,8 +184,16 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 			whereClause = " WHERE "; 
 		}
 		
-		if (category != 0){ //Not "all Category"
+		if (category != 0){
 			whereClause = whereClause + COLUMN_CATEGORY + " LIKE '" + SearchHome.CATEGORY_OPTIONS[category] + "'";
+		}
+		
+		if(category != 0 && area != 0) {
+			whereClause = whereClause + " AND ";
+		}
+		
+		if(area != 0) {
+			whereClause = whereClause + COLUMN_AREA  + " LIKE '" + SearchHome.LOCATION_OPTIONS[area] + "'";
 		}
 
 	    List<Itinerary> itineraryList = new ArrayList<Itinerary>();

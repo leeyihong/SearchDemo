@@ -94,24 +94,21 @@ public class SearchHome extends Activity {
 	 	}
 	 	
 	 	category_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+	 		@Override
+	 		public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+	 			lastSelectedCategory = position;
+	 			filterItinerary();
+	 		}
+	 		
+	 		@Override
+	 		public void onNothingSelected(AdapterView<?> arg0) {}
+	 	});
+	 	
+	 	location_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			@Override
 			public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-				lastSelectedCategory = position;
-				
-				try {
-			 		myDbHelper.openDataBase();
-			 		
-					pd = ProgressDialog.show(SearchHome.this, "","Loading...", true, true);
-
-		    		List<Itinerary> iti = myDbHelper.filterItineraryList(lastSelectedCategory, lastSelectedLocation, lastSelectedSorting);
-		            itineraryListAdapter = new ItineraryListAdapter(new ArrayList<Itinerary>(iti));
-		            itinerary_list.setAdapter(itineraryListAdapter);
-		            itineraryListAdapter.notifyDataSetChanged();
-		            
-		            pd.dismiss();
-			 	}catch(SQLException sqle){
-			 		throw sqle;
-			 	}
+				lastSelectedLocation = position;
+				filterItinerary();
 			}
 
 			@Override
@@ -125,6 +122,23 @@ public class SearchHome extends Activity {
 		screenWidth = (int) metrics.widthPixels;
 		
 		imageHeightPixel = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150 , getResources().getDisplayMetrics());
+	}
+	
+	public void filterItinerary(){
+		try {
+	 		myDbHelper.openDataBase();
+	 		
+			pd = ProgressDialog.show(SearchHome.this, "","Loading...", true, true);
+
+    		List<Itinerary> iti = myDbHelper.filterItineraryList(lastSelectedCategory, lastSelectedLocation, lastSelectedSorting);
+            itineraryListAdapter = new ItineraryListAdapter(new ArrayList<Itinerary>(iti));
+            itinerary_list.setAdapter(itineraryListAdapter);
+            itineraryListAdapter.notifyDataSetChanged();
+            
+            pd.dismiss();
+	 	}catch(SQLException sqle){
+	 		throw sqle;
+	 	}
 	}
 
 	@Override
