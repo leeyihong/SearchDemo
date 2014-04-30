@@ -19,6 +19,7 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -30,12 +31,14 @@ public class SearchHome extends Activity {
 	
 	float screenWidth = 0;
 	int imageHeightPixel = 0;
+	int lastSelectedCategory=0, lastSelectedLocation=0, lastSelectedSorting =0;
 	ItineraryListAdapter itineraryListAdapter;
 	ListView itinerary_list;
 	ProgressDialog pd;
 	Spinner category_spinner, location_spinner, sorting_preferences_spinner;
 	SQLiteHelper myDbHelper;
 	
+	//public static final String[] CATEGORY_OPTIONS  = getResources().getStringArray(R.array.category_option);
 	public static final String[] CATEGORY_OPTIONS  = {"ALL CATEGORY", "Food and Beverage", "Island", "Nature", "Museum", "Religion", "To-Do"};
 	public static final String[] LOCATION_OPTIONS  = {"EVERYWHERE", "Central", "North", "South", "East", "West"};
 	public static final String[] SORT_OPTIONS  = {"AI SORTING","Highest Rating", "Lowest Rating", "Latest Updated", "Alphabet"};	// Other possible sort Distance 
@@ -63,8 +66,6 @@ public class SearchHome extends Activity {
 		sortingAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sorting_preferences_spinner.setAdapter(sortingAdapter);
         
-        //TODO List/Table View Itinerary
-        
         getImageWidthDimension();
         
         //DATABASE QUERY
@@ -91,6 +92,31 @@ public class SearchHome extends Activity {
 	 	}catch(SQLException sqle){
 	 		throw sqle;
 	 	}
+	 	
+	 	category_spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+				lastSelectedCategory = position;
+				
+				try {
+			 		myDbHelper.openDataBase();
+			 		
+					pd = ProgressDialog.show(SearchHome.this, "","Loading...", true, true);
+
+		    		List<Itinerary> iti = myDbHelper.filterItineraryList(lastSelectedCategory, lastSelectedLocation, lastSelectedSorting);
+		            itineraryListAdapter = new ItineraryListAdapter(new ArrayList<Itinerary>(iti));
+		            itinerary_list.setAdapter(itineraryListAdapter);
+		            itineraryListAdapter.notifyDataSetChanged();
+		            
+		            pd.dismiss();
+			 	}catch(SQLException sqle){
+			 		throw sqle;
+			 	}
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> arg0) {}
+		});
 	}
 
 	public void getImageWidthDimension(){
@@ -98,13 +124,12 @@ public class SearchHome extends Activity {
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 		screenWidth = (int) metrics.widthPixels;
 		
-		DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
 		imageHeightPixel = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150 , getResources().getDisplayMetrics());
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		//TODO add Search by Name
+		//TODO add Search Icon to search by Name
 		getMenuInflater().inflate(R.menu.search_home, menu);
 		return true;
 	}

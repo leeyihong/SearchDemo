@@ -140,14 +140,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	}
  
 	@Override
-	public void onCreate(SQLiteDatabase db) {
- 
-	}
+	public void onCreate(SQLiteDatabase db) {}
  
 	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
- 
-	}
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {}
 	
 	public List<Itinerary> getAllItineraryList() {
 	    List<Itinerary> itineraryList = new ArrayList<Itinerary>();
@@ -178,5 +174,43 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	    return itineraryList;
 	}
 	
+	public List<Itinerary> filterItineraryList(int category, int area, int sorting) {
+		
+		String filterTableQuery = "SELECT  * FROM " + TABLE_ITINEARY ;
+		
+		String whereClause = "";
+		
+		if(category != 0 || area != 0) {
+			whereClause = " WHERE "; 
+		}
+		
+		if (category != 0){ //Not "all Category"
+			whereClause = whereClause + COLUMN_CATEGORY + " LIKE '" + SearchHome.CATEGORY_OPTIONS[category] + "'";
+		}
+
+	    List<Itinerary> itineraryList = new ArrayList<Itinerary>();
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = myDatabase.rawQuery(filterTableQuery + whereClause, null);
+		
+	    if (cursor.moveToFirst()) {
+	    	do {
+	        	Itinerary itinerary = new Itinerary();
+	        	itinerary.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_ID))));
+	        	itinerary.setPoi(cursor.getString(cursor.getColumnIndex(COLUMN_POI)));
+	        	itinerary.setRating(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_RATING))));
+	        	itinerary.setCategory(cursor.getString(cursor.getColumnIndex(COLUMN_CATEGORY)));
+	        	itinerary.setSubCategory(cursor.getString(cursor.getColumnIndex(COLUMN_SUBCATEGORY)));
+	        	itinerary.setArea(cursor.getString(cursor.getColumnIndex(COLUMN_AREA)));
+	        	itinerary.setLocation(cursor.getString(cursor.getColumnIndex(COLUMN_LOCATION)));
+	        	itinerary.setImage(cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE)));
+	        	
+	            itineraryList.add(itinerary);
+	    	}while(cursor.moveToNext());
+	    }
+	    cursor.close();
+	    
+	    return itineraryList;
+		
+	}
 
 }
