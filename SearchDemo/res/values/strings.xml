@@ -2,11 +2,12 @@
 <resources>
 
     <string name="app_name">Search Demo</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
     <string name="hello_world">Hello world!</string>
     
     <string name="category_prompt">Category</string>
     <string name="location_prompt">Location</string>
+    <string name="search_hint">Enter Itinerary Name</string>
     <string name="sort_prompt">Location</string>
 
     <string-array name="category_option">

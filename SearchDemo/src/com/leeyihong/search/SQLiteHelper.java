@@ -233,5 +233,37 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	    return itineraryList;
 		
 	}
+	
+	public List<Itinerary> searchByName(String searchName) {
+
+		String filterTableQuery = "SELECT  * FROM " + TABLE_ITINEARY ;
+		
+		String whereClause = "";
+		if(searchName.length() > 0) {
+			whereClause = " WHERE " + COLUMN_POI + " LIKE '%" + searchName + "%'  COLLATE NOCASE";
+		}
+	   
+		List<Itinerary> itineraryList = new ArrayList<Itinerary>();
+		Cursor cursor = myDatabase.rawQuery(filterTableQuery + whereClause, null);
+		
+	    if (cursor.moveToFirst()) {
+	    	do {
+	        	Itinerary itinerary = new Itinerary();
+	        	itinerary.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_ID))));
+	        	itinerary.setPoi(cursor.getString(cursor.getColumnIndex(COLUMN_POI)));
+	        	itinerary.setRating(Integer.parseInt(cursor.getString(cursor.getColumnIndex(COLUMN_RATING))));
+	        	itinerary.setCategory(cursor.getString(cursor.getColumnIndex(COLUMN_CATEGORY)));
+	        	itinerary.setSubCategory(cursor.getString(cursor.getColumnIndex(COLUMN_SUBCATEGORY)));
+	        	itinerary.setArea(cursor.getString(cursor.getColumnIndex(COLUMN_AREA)));
+	        	itinerary.setLocation(cursor.getString(cursor.getColumnIndex(COLUMN_LOCATION)));
+	        	itinerary.setImage(cursor.getBlob(cursor.getColumnIndex(COLUMN_IMAGE)));
+	        	
+	            itineraryList.add(itinerary);
+	    	}while(cursor.moveToNext());
+	    }
+	    cursor.close();
+	    
+	    return itineraryList;
+	}
 
 }

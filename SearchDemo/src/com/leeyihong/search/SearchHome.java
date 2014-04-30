@@ -9,6 +9,8 @@ import com.leeyihong.search.R;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.database.SQLException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,6 +19,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -24,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -156,7 +160,20 @@ public class SearchHome extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		//TODO add Search Icon to search by Name
 		getMenuInflater().inflate(R.menu.search_home, menu);
+		
+		SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+//        if (id == R.id.action_search) {
+//        	Log.i("","Click on Search");
+//        }
+		return super.onOptionsItemSelected(item);
 	}
 
 	public class ItineraryListAdapter extends BaseAdapter {
